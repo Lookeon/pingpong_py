@@ -154,7 +154,7 @@ class Ball:
 class PingPongGame:
     def __init__(self, root):
         self.root = root
-        self.root.title("Ping Pong test")
+        self.root.title("Ping Pong")
         self.root.resizable(False, False)
         self.root.configure(bg="#020817")
         self.root.geometry("680x560")
