@@ -58,4 +58,5 @@ As constantes no topo do arquivo permitem ajustar o jogo:
 
 
 
-<img width="624" height="472" alt="image" src="https://github.com/user-attachments/assets/f60b9497-ec95-4cb0-a546-3b6596799e4d" />
+<img width="675" height="552" alt="image" src="https://github.com/user-attachments/assets/a817d9c9-294f-4cb9-90b1-238bb71d8c99" />
+
