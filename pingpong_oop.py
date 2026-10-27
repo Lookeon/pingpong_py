@@ -19,24 +19,57 @@ class Paddle:
         self.height = PADDLE_HEIGHT
         self.x = (GAME_WIDTH - self.width) / 2
         self.y = GAME_HEIGHT - self.height - 18
+        self.shadow = canvas.create_rectangle(
+            self.x + 4,
+            self.y + 4,
+            self.x + self.width + 4,
+            self.y + self.height + 4,
+            fill="#0f172a",
+            outline="",
+            tags="paddle",
+        )
         self.item = canvas.create_rectangle(
             self.x,
             self.y,
             self.x + self.width,
             self.y + self.height,
-            fill="#22c55e",
-            outline="#16a34a",
-            width=2,
+            fill="#f97316",
+            outline="#fdba74",
+            width=3,
+            tags="paddle",
+        )
+        self.highlight = canvas.create_rectangle(
+            self.x + 8,
+            self.y + 3,
+            self.x + self.width - 8,
+            self.y + self.height / 2,
+            fill="#fed7aa",
+            outline="",
+            tags="paddle",
         )
 
     def move_to(self, x):
         self.x = max(0, min(x, GAME_WIDTH - self.width))
+        self.canvas.coords(
+            self.shadow,
+            self.x + 4,
+            self.y + 4,
+            self.x + self.width + 4,
+            self.y + self.height + 4,
+        )
         self.canvas.coords(
             self.item,
             self.x,
             self.y,
             self.x + self.width,
             self.y + self.height,
+        )
+        self.canvas.coords(
+            self.highlight,
+            self.x + 8,
+            self.y + 3,
+            self.x + self.width - 8,
+            self.y + self.height / 2,
         )
 
     def move(self, direction):
@@ -56,14 +89,33 @@ class Ball:
         angle = (random.random() * 1.8 - 0.9) * 1.4
         self.vx = speed * math.sin(angle)
         self.vy = speed * math.cos(angle) + 2
+        self.shadow = canvas.create_oval(
+            self.x + 3,
+            self.y + 3,
+            self.x + self.size + 3,
+            self.y + self.size + 3,
+            fill="#111827",
+            outline="",
+            tags="ball",
+        )
         self.item = canvas.create_oval(
             self.x,
             self.y,
             self.x + self.size,
             self.y + self.size,
             fill="#fbbf24",
-            outline="#d97706",
+            outline="#fff7ed",
             width=2,
+            tags="ball",
+        )
+        self.inner = canvas.create_oval(
+            self.x + 5,
+            self.y + 5,
+            self.x + self.size - 5,
+            self.y + self.size - 5,
+            fill="#fde68a",
+            outline="",
+            tags="ball",
         )
 
     def move(self):
@@ -72,42 +124,72 @@ class Ball:
 
     def draw(self):
         self.canvas.coords(
+            self.shadow,
+            self.x + 3,
+            self.y + 3,
+            self.x + self.size + 3,
+            self.y + self.size + 3,
+        )
+        self.canvas.coords(
             self.item,
             self.x,
             self.y,
             self.x + self.size,
             self.y + self.size,
         )
+        self.canvas.coords(
+            self.inner,
+            self.x + 5,
+            self.y + 5,
+            self.x + self.size - 5,
+            self.y + self.size - 5,
+        )
 
     def destroy(self):
+        self.canvas.delete(self.shadow)
         self.canvas.delete(self.item)
+        self.canvas.delete(self.inner)
 
 
 class PingPongGame:
     def __init__(self, root):
         self.root = root
-        self.root.title("Ping Pong OOP")
+        self.root.title("Ping Pong Neon")
         self.root.resizable(False, False)
-        self.root.configure(bg="#111827")
+        self.root.configure(bg="#020817")
+        self.root.geometry("680x560")
+
+        self.title_label = tk.Label(
+            root,
+            text="PING PONG",
+            font=("Arial", 22, "bold"),
+            fg="#e2e8f0",
+            bg="#020817",
+            pady=14,
+        )
+        self.title_label.pack()
+
+        self.score_label = tk.Label(
+            root,
+            text="",
+            font=("Arial", 14, "bold"),
+            fg="#f8fafc",
+            bg="#0f172a",
+            padx=18,
+            pady=8,
+            relief="flat",
+            bd=0,
+        )
+        self.score_label.pack(pady=(0, 12))
 
         self.canvas = tk.Canvas(
             root,
             width=GAME_WIDTH,
             height=GAME_HEIGHT,
-            bg="#111827",
-            highlightthickness=4,
-            highlightbackground="#38bdf8",
+            bg="#081b2b",
+            highlightthickness=0,
         )
-        self.canvas.pack(padx=12, pady=(12, 0))
-
-        self.score_label = tk.Label(
-            root,
-            text="",
-            font=("Arial", 18, "bold"),
-            fg="white",
-            bg="#111827",
-        )
-        self.score_label.pack(pady=10)
+        self.canvas.pack(padx=12, pady=(0, 8))
 
         self.restart_button = tk.Button(
             root,
@@ -116,8 +198,11 @@ class PingPongGame:
             bg="#f59e0b",
             fg="#111827",
             font=("Arial", 12, "bold"),
-            padx=14,
-            pady=6,
+            padx=18,
+            pady=8,
+            relief="flat",
+            activebackground="#fbbf24",
+            cursor="hand2",
         )
         self.restart_window = self.canvas.create_window(
             GAME_WIDTH / 2,
@@ -135,6 +220,44 @@ class PingPongGame:
 
         self.reset_game()
 
+    def draw_background(self):
+        self.canvas.create_rectangle(
+            0,
+            0,
+            GAME_WIDTH,
+            GAME_HEIGHT,
+            fill="#081b2b",
+            outline="",
+            tags="background",
+        )
+        self.canvas.create_line(
+            GAME_WIDTH / 2,
+            0,
+            GAME_WIDTH / 2,
+            GAME_HEIGHT,
+            fill="#38bdf8",
+            dash=(10, 8),
+            width=2,
+            tags="background",
+        )
+        for x, y in [
+            (40, 45),
+            (130, 90),
+            (500, 55),
+            (540, 150),
+            (70, 300),
+            (530, 280),
+        ]:
+            self.canvas.create_oval(
+                x,
+                y,
+                x + 6,
+                y + 6,
+                fill="#67e8f9",
+                outline="",
+                tags="background",
+            )
+
     def reset_game(self):
         if self.after_id is not None:
             self.root.after_cancel(self.after_id)
@@ -149,10 +272,10 @@ class PingPongGame:
         self.right_pressed = False
 
         self.canvas.delete("all")
+        self.draw_background()
         self.paddle = Paddle(self.canvas)
         self.ball = Ball(self.canvas, self.score)
 
-        # Recreate the embedded button because clearing the canvas removes its window.
         self.restart_window = self.canvas.create_window(
             GAME_WIDTH / 2,
             GAME_HEIGHT / 2 + 65,
@@ -164,7 +287,9 @@ class PingPongGame:
 
     def update_score(self):
         self.score_label.config(
-            text=f"Pontuação: {self.score} | Vidas: {self.lives}"
+            text=f"Pontuação: {self.score}   •   Vidas: {self.lives}",
+            bg="#0f172a",
+            fg="#f8fafc",
         )
 
     def spawn_ball(self):
@@ -182,18 +307,18 @@ class PingPongGame:
     def end_game(self):
         self.running = False
         self.canvas.create_rectangle(
-            0,
-            0,
-            GAME_WIDTH,
-            GAME_HEIGHT,
+            70,
+            110,
+            GAME_WIDTH - 70,
+            GAME_HEIGHT - 90,
             fill="#0f172a",
-            stipple="gray50",
-            outline="",
+            outline="#38bdf8",
+            width=3,
             tags="game_over",
         )
         self.canvas.create_text(
             GAME_WIDTH / 2,
-            GAME_HEIGHT / 2 - 35,
+            GAME_HEIGHT / 2 - 32,
             text="Fim de jogo",
             fill="#f8fafc",
             font=("Arial", 30, "bold"),
@@ -201,9 +326,9 @@ class PingPongGame:
         )
         self.canvas.create_text(
             GAME_WIDTH / 2,
-            GAME_HEIGHT / 2 + 5,
+            GAME_HEIGHT / 2 + 8,
             text=f"Pontuação final: {self.score}",
-            fill="white",
+            fill="#cbd5e1",
             font=("Arial", 20),
             tags="game_over",
         )
